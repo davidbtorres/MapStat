@@ -1,39 +1,13 @@
-import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
-import worldData from "../data/world.geo.json";
-import costOfLiving from "../data/costOfLiving";
-import { getCountryColor } from "../utils/colorScale";
+import { MapContainer, TileLayer } from "react-leaflet";
 
-export default function MapView() {
-  function style(feature: any) {
-    const code = feature.properties.iso_a3;
+import CountriesLayer from "./layers/CountriesLayer";
+import CitiesLayer from "./layers/CitiesLayer";
 
-    console.log(code);
+type Props = {
+  mode: "countries" | "cities";
+};
 
-    const value = costOfLiving[code];
-
-    console.log(value);
-
-    return {
-      fillColor: getCountryColor(value),
-      weight: 1,
-      opacity: 1,
-      color: "white",
-      dashArray: "3",
-      fillOpacity: 0.7,
-    };
-  }
-
-  function onEachCountry(feature: any, layer: any) {
-    const code = feature.properties.iso_a3;
-    const name = feature.properties.name_en;
-    const value = costOfLiving[code];
-
-    layer.bindPopup(`
-      <strong>${name}</strong><br/>
-      Cost of Living: ${value ?? "No Data"}
-    `);
-  }
-
+export default function MapView({ mode }: Props) {
   return (
     <MapContainer
       center={[20, 0]}
@@ -45,11 +19,13 @@ export default function MapView() {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
-      <GeoJSON
+      {/* <GeoJSON
         data={worldData as any}
         style={style}
         onEachFeature={onEachCountry}
-      />
+      /> */}
+      {mode === "countries" && <CountriesLayer />}
+      {mode === "cities" && <CitiesLayer />}
     </MapContainer>
   );
 }
